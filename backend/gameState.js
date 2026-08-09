@@ -147,7 +147,7 @@ class GameState {
       ...publicState,
       yourHand: hand,
       legalMoves: this.phase === "playing" && playerId === this.currentPlayerId()
-        ? legalMoves(hand, this.leadSuit)
+        ? legalMoves(hand, this.leadSuit, this.currentTrick)
         : [],
     };
   }
