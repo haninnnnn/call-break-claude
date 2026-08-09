@@ -5,8 +5,8 @@ const TRUMP_SUIT = "S"; // Spades are always trump in Call Break
 // Legal moves — correct Call Break rules:
 // 1. Must follow led suit if you have it
 //    AND must play a HIGHER card of that suit if you have one
-// 2. If you have no led suit cards, must play trump if you have it
-// 3. If you have neither, play anything
+// 2. If you have no led suit cards, can play ANY card (can save trump for later)
+// 3. Trump/Spades always win tricks if played, highest spade wins if multiple spades
 function legalMoves(hand, leadSuit, currentTrick) {
   if (!leadSuit) return hand; // leading the trick — any card is legal
 
@@ -43,9 +43,8 @@ function legalMoves(hand, leadSuit, currentTrick) {
     return suitCards;
   }
 
-  // No led suit cards — must play trump if available
-  const trumpCards = hand.filter((c) => c.suit === TRUMP_SUIT);
-  return trumpCards.length > 0 ? trumpCards : hand;
+  // No led suit cards — can play ANY card (including saving trump for later)
+  return hand;
 }
 
 function isLegalMove(hand, leadSuit, card, currentTrick) {
