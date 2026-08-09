@@ -2,16 +2,46 @@ const { cardValue } = require("./deck");
 
 const TRUMP_SUIT = "S"; // Spades are always trump in Call Break
 
-// Determine which cards in `hand` are legal to play given the led suit.
-// Rule: must follow suit if you have a card of the led suit. Otherwise, any card (including trump).
-function legalMoves(hand, leadSuit) {
-  if (!leadSuit) return hand; // first card of the trick — any card is legal
-  const followSuit = hand.filter((c) => c.suit === leadSuit);
-  return followSuit.length > 0 ? followSuit : hand;
+// Legal moves — enhanced rule:
+// 1. Must follow led suit if you have it
+//    AND must play a HIGHER card of that suit if you have one
+// 2. If you have no led suit cards, must play trump if you have it
+// 3. If you have neither, play anything
+function legalMoves(hand, leadSuit, currentTrick) {
+  if (!leadSuit) return hand; // leading the trick — any card is legal
+
+  const suitCards = hand.filter((c) => c.suit === leadSuit);
+
+  if (suitCards.length > 0) {
+    // Find the current highest card of the led suit on the table
+    const trickSuitCards = (currentTrick || [])
+      .map((t) => t.card)
+      .filter((c) => c.suit === leadSuit);
+
+    const highestOnTable = trickSuitCards.reduce(
+      (max, c) => (cardValue(c) > cardValue(max) ? c : max),
+      trickSuitCards[0]
+    );
+
+    if (highestOnTable) {
+      // Must play higher if possible
+      const higherCards = suitCards.filter(
+        (c) => cardValue(c) > cardValue(highestOnTable)
+      );
+      return higherCards.length > 0 ? higherCards : suitCards;
+    }
+
+    // First card of led suit on table — must follow suit
+    return suitCards;
+  }
+
+  // No led suit cards — must play trump if available
+  const trumpCards = hand.filter((c) => c.suit === TRUMP_SUIT);
+  return trumpCards.length > 0 ? trumpCards : hand;
 }
 
-function isLegalMove(hand, leadSuit, card) {
-  const legal = legalMoves(hand, leadSuit);
+function isLegalMove(hand, leadSuit, card, currentTrick) {
+  const legal = legalMoves(hand, leadSuit, currentTrick);
   return legal.some((c) => c.id === card.id);
 }
 
@@ -20,11 +50,11 @@ function isLegalMove(hand, leadSuit, card) {
 function resolveTrick(trick) {
   const leadSuit = trick[0].card.suit;
 
-  // Spades in the trick beat everything else
   const spadesPlayed = trick.filter((t) => t.card.suit === TRUMP_SUIT);
-  const contenders = spadesPlayed.length > 0
-    ? spadesPlayed
-    : trick.filter((t) => t.card.suit === leadSuit);
+  const contenders =
+    spadesPlayed.length > 0
+      ? spadesPlayed
+      : trick.filter((t) => t.card.suit === leadSuit);
 
   let winner = contenders[0];
   for (const entry of contenders) {

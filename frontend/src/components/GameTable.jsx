@@ -74,12 +74,22 @@ export function GameTable({ state, room, selfId, onBid, onPlayCard }) {
         <div className="trick-pit">
           {[top, right, bottom, left].map((p) =>
             p && trickByPlayer[p.id] ? (
-              <div key={p.id} className={`pit-card pit-${p === top ? "top" : p === right ? "right" : p === bottom ? "bottom" : "left"}`}>
+              <div
+                key={p.id}
+                className={`pit-card pit-center ${
+                  state.phase === "trickComplete" && state.trickWinnerId === p.id
+                    ? "trick-winner"
+                    : ""
+                } ${state.phase === "trickComplete" ? "slide-to-winner" : ""}`}
+              >
                 <Card card={trickByPlayer[p.id]} size="sm" />
               </div>
             ) : null
           )}
           {state.phase === "bidding" && <p className="pit-message">Bidding…</p>}
+          {state.phase === "roundOver" && (
+            <p className="pit-message round-over-msg">Round over! Next round starting…</p>
+          )}
         </div>
 
         <div className="seat-pos seat-bottom">{seatLabel(bottom)}</div>

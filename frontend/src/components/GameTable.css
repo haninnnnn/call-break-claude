@@ -68,14 +68,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100px;
+  min-height: 120px;
 }
-.pit-card { position: absolute; }
-.pit-top { transform: translateY(-30px); }
-.pit-bottom { transform: translateY(30px); }
-.pit-left { transform: translateX(-40px); }
-.pit-right { transform: translateX(40px); }
+
+/* All cards stack at center with slight offsets so they're all visible */
+.pit-card {
+  position: absolute;
+  transition: transform 0.75s ease, opacity 0.75s ease;
+}
+
+/* Spread cards slightly so all 4 are visible at center */
+.pit-card:nth-child(1) { transform: translate(-24px, -18px) rotate(-6deg); }
+.pit-card:nth-child(2) { transform: translate(20px, -14px) rotate(4deg); }
+.pit-card:nth-child(3) { transform: translate(-16px, 18px) rotate(3deg); }
+.pit-card:nth-child(4) { transform: translate(22px, 16px) rotate(-5deg); }
+
+/* When trick is complete, slide all cards to winner (collapse to center) */
+.slide-to-winner .pit-card {
+  transform: translate(0, 0) rotate(0deg) scale(0.85);
+  opacity: 0.7;
+}
+/* Highlight winning card */
+.trick-winner {
+  z-index: 10;
+  transform: translate(0, 0) scale(1.1) !important;
+  opacity: 1 !important;
+}
+
 .pit-message { color: var(--cream-dim); font-style: italic; font-size: 0.85rem; }
+.round-over-msg { color: #f0c040; font-weight: 600; font-size: 0.95rem; animation: pulse 0.8s infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
 
 .hand-area {
   display: flex;

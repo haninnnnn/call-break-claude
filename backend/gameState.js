@@ -55,8 +55,8 @@ class GameState {
     if (playerId !== this.currentPlayerId()) throw new Error("Not this player's turn");
 
     const hand = this.hands[playerId];
-    if (!isLegalMove(hand, this.leadSuit, card)) {
-      throw new Error("Illegal move: must follow suit if possible");
+    if (!isLegalMove(hand, this.leadSuit, card, this.currentTrick)) {
+      throw new Error("Illegal move: must play higher card of led suit if possible, or trump if void");
     }
 
     // remove card from hand
@@ -67,16 +67,29 @@ class GameState {
     if (this.currentTrick.length === 4) {
       const winnerId = resolveTrick(this.currentTrick);
       this.tricksWon[winnerId] += 1;
-      this.currentTrick = [];
-      this.leadSuit = null;
-      this.turnIndex = this.playerIds.indexOf(winnerId);
+      this.trickWinnerId = winnerId;         // expose winner for animation
+      this.phase = "trickComplete";          // pause for animation
 
-      const tricksPlayed = Object.values(this.tricksWon).reduce((a, b) => a + b, 0);
-      if (tricksPlayed === 13) {
-        this._endRound();
-      }
+      // After 0.75s clear trick, after 3s start next round if needed
+      // (server handles the setTimeout and calls resolveTrickComplete)
     } else {
       this.turnIndex = (this.turnIndex + 1) % 4;
+    }
+    return this.getPublicState();
+  }
+
+  // Called by server after 0.75s animation delay
+  resolveTrickComplete() {
+    const winnerId = this.trickWinnerId;
+    this.currentTrick = [];
+    this.leadSuit = null;
+    this.trickWinnerId = null;
+    this.turnIndex = this.playerIds.indexOf(winnerId);
+    this.phase = "playing";
+
+    const tricksPlayed = Object.values(this.tricksWon).reduce((a, b) => a + b, 0);
+    if (tricksPlayed === 13) {
+      this._endRound();
     }
     return this.getPublicState();
   }
@@ -96,10 +109,16 @@ class GameState {
     if (this.currentRoundNumber >= this.totalRounds) {
       this.phase = "gameOver";
     } else {
-      this.currentRoundNumber += 1;
-      this.dealerIndex = (this.dealerIndex + 1) % 4;
-      this._startRound();
+      this.phase = "roundOver"; // pause 3s before next round (server handles setTimeout)
     }
+  }
+
+  // Called by server after 3s round-over delay
+  startNextRound() {
+    this.currentRoundNumber += 1;
+    this.dealerIndex = (this.dealerIndex + 1) % 4;
+    this._startRound();
+    return this.getPublicState();
   }
 
   // State safe to broadcast to everyone (no other players' hands)
@@ -113,6 +132,7 @@ class GameState {
       bids: this.bids,
       tricksWon: this.tricksWon,
       currentTrick: this.currentTrick,
+      trickWinnerId: this.trickWinnerId ?? null,
       totalScores: this.totalScores,
       roundHistory: this.roundHistory,
       handCounts: Object.fromEntries(this.playerIds.map((id) => [id, this.hands[id].length])),

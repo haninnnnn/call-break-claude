@@ -94,7 +94,31 @@ io.on("connection", (socket) => {
       if (!room?.game) throw new Error("Game not in progress");
       room.game.playCard(socket.id, card);
       callback({ ok: true });
-      broadcastGameState(room);
+      broadcastGameState(room); // broadcast trickComplete phase (shows all 4 cards)
+
+      if (room.game.phase === "trickComplete") {
+        // 0.75s — let clients animate cards sliding to winner
+        setTimeout(() => {
+          if (!room.game) return;
+          room.game.resolveTrickComplete();
+          broadcastGameState(room);
+
+          if (room.game.phase === "roundOver") {
+            // 3s — show round summary before next round starts
+            setTimeout(() => {
+              if (!room.game) return;
+              room.game.startNextRound();
+              broadcastGameState(room);
+            }, 3000);
+          }
+
+          if (room.game.phase === "gameOver") {
+            room.status = "finished";
+            broadcastRoom(room);
+          }
+        }, 750);
+      }
+
       if (room.game.phase === "gameOver") {
         room.status = "finished";
         broadcastRoom(room);
