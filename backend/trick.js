@@ -18,6 +18,7 @@ function legalMoves(hand, leadSuit, currentTrick) {
       .map((t) => t.card)
       .filter((c) => c.suit === leadSuit);
 
+    // If there are cards of the led suit already played
     if (trickSuitCards.length > 0) {
       const highestOnTable = trickSuitCards.reduce(
         (max, c) => (cardValue(c) > cardValue(max) ? c : max),
@@ -28,11 +29,13 @@ function legalMoves(hand, leadSuit, currentTrick) {
       const higherCards = suitCards.filter(
         (c) => cardValue(c) > cardValue(highestOnTable)
       );
+      
       // If you have higher cards, you MUST play one of them
       if (higherCards.length > 0) {
         return higherCards;
       }
-      // If you don't have higher cards, you must still follow suit (play any card of that suit)
+      
+      // If you don't have higher cards, you must still follow suit
       return suitCards;
     }
 
