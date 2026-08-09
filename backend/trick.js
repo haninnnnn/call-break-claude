@@ -30,6 +30,11 @@ function legalMoves(hand, leadSuit, currentTrick) {
         (c) => cardValue(c) > cardValue(highestOnTable)
       );
       
+      // DEBUG: Log what's happening
+      console.log(`[legalMoves] Lead suit: ${leadSuit}, Highest on table: ${highestOnTable.rank}${highestOnTable.suit} (value ${cardValue(highestOnTable)})`);
+      console.log(`[legalMoves] Your suit cards:`, suitCards.map(c => `${c.rank}${c.suit}(${cardValue(c)})`).join(", "));
+      console.log(`[legalMoves] Higher cards:`, higherCards.map(c => `${c.rank}${c.suit}(${cardValue(c)})`).join(", "));
+      
       // If you have higher cards, you MUST play one of them
       if (higherCards.length > 0) {
         return higherCards;
