@@ -4,9 +4,9 @@
 function scoreRound(bid, tricksWon) {
   if (tricksWon >= bid) {
     const overtricks = tricksWon - bid;
-    return bid * 10 + overtricks * 0.1;
+    return bid * 1 + overtricks * 0.1;
   }
-  return -10 * bid;
+  return -1 * bid;
 }
 
 // bids/tricksWon: { playerId: number }
