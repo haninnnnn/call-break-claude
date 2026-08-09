@@ -18,17 +18,22 @@ function legalMoves(hand, leadSuit, currentTrick) {
       .map((t) => t.card)
       .filter((c) => c.suit === leadSuit);
 
-    const highestOnTable = trickSuitCards.reduce(
-      (max, c) => (cardValue(c) > cardValue(max) ? c : max),
-      trickSuitCards[0]
-    );
+    if (trickSuitCards.length > 0) {
+      const highestOnTable = trickSuitCards.reduce(
+        (max, c) => (cardValue(c) > cardValue(max) ? c : max),
+        trickSuitCards[0]
+      );
 
-    if (highestOnTable) {
       // Must play higher if possible
       const higherCards = suitCards.filter(
         (c) => cardValue(c) > cardValue(highestOnTable)
       );
-      return higherCards.length > 0 ? higherCards : suitCards;
+      // If you have higher cards, you MUST play one of them
+      if (higherCards.length > 0) {
+        return higherCards;
+      }
+      // If you don't have higher cards, you must still follow suit (play any card of that suit)
+      return suitCards;
     }
 
     // First card of led suit on table — must follow suit
