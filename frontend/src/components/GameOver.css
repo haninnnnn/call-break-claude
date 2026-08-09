@@ -1,0 +1,14 @@
+.final-scores { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.final-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--ink);
+}
+.final-row.self { background: rgba(201,162,75,0.18); }
+.final-rank { color: var(--panel); font-weight: 700; }
+.final-name { font-weight: 600; }
+.final-score { font-weight: 700; }
