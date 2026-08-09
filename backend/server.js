@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
             room.status = "finished";
             broadcastRoom(room);
           }
-        }, 750);
+        }, 1500);
       }
 
       if (room.game.phase === "gameOver") {
