@@ -25,7 +25,9 @@
   box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
   min-height: 320px;
   display: grid;
+  grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr auto;
+  gap: 4px;
   padding: 12px;
 }
 
@@ -35,10 +37,10 @@
   align-items: center;
   gap: 6px;
 }
-.seat-top { grid-row: 1; justify-self: center; }
-.seat-bottom { grid-row: 3; justify-self: center; }
-.seat-left { grid-row: 2; justify-self: start; align-self: center; }
-.seat-right { grid-row: 2; justify-self: end; align-self: center; }
+.seat-top    { grid-column: 2; grid-row: 1; justify-self: center; }
+.seat-bottom { grid-column: 2; grid-row: 3; justify-self: center; }
+.seat-left   { grid-column: 1; grid-row: 2; justify-self: start; align-self: center; }
+.seat-right  { grid-column: 3; grid-row: 2; justify-self: end;   align-self: center; }
 
 .seat-tag {
   background: rgba(0,0,0,0.3);
@@ -63,6 +65,7 @@
 .opp-hand.vertical .card-back:first-child { margin-top: 0; }
 
 .trick-pit {
+  grid-column: 2;
   grid-row: 2;
   position: relative;
   display: flex;
