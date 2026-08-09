@@ -80,14 +80,11 @@
   transition: transform 0.75s ease, opacity 0.75s ease;
 }
 
-/* Top player card */
-.pit-card:nth-child(1) { transform: translate(0px, -70px); }
-/* Right player card */
-.pit-card:nth-child(2) { transform: translate(70px, 0px); }
-/* Bottom player card */
-.pit-card:nth-child(3) { transform: translate(0px, 70px); }
-/* Left player card */
-.pit-card:nth-child(4) { transform: translate(-70px, 0px); }
+/* Closer together */
+.pit-card:nth-child(1) { transform: translate(0px, -40px); }
+.pit-card:nth-child(2) { transform: translate(40px, 0px); }
+.pit-card:nth-child(3) { transform: translate(0px, 40px); }
+.pit-card:nth-child(4) { transform: translate(-40px, 0px); }
 
 /* When trick is complete, slide all cards to winner (collapse to center) */
 .slide-to-winner .pit-card {
